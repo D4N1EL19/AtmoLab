@@ -4,15 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "concurrently \"npm run dev-server\" \"npm run tailwind-watch\"",
+    "dev-server": "vite",
+    "tailwind-watch": "npx @tailwindcss/cli -i ./src/assets/tailwind.css -o ./src/assets/style.css --watch"
   },
   "dependencies": {
-    "vue": "^3.5.22"
+    "@tailwindcss/cli": "^4.1.14",
+    "axios": "^1.12.2",
+    "tailwindcss": "^4.1.14",
+    "vue": "^3.5.22",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
+    "concurrently": "^9.2.1",
     "vite": "^7.1.7"
   }
 }
