@@ -191,6 +191,9 @@
   }
 }
 @layer utilities {
+  .visible {
+    visibility: visible;
+  }
   .mt-3 {
     margin-top: calc(var(--spacing) * 3);
   }
