@@ -1,5 +1,3 @@
-import xarray as xr
-import numpy as np
 import os
 import time
 import earthaccess

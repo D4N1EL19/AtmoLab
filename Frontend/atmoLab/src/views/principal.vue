@@ -105,7 +105,9 @@ function animarGloboYFecha(targetX) {
 
 function handleFechaSeleccionada({ fecha }) {
   console.log("Fecha seleccionada:", fecha);
-  animarGloboYFecha(900);
+
+  animarGlobo(800);
+
 }
 
 onMounted(() => {
