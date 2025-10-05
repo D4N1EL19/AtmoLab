@@ -16,4 +16,5 @@ El proyecto consiste en desarrollar una aplicación que permite a los usuarios r
  
 ## Documentacion
 - [Cloud OPeNDAP Granules](https://disc.gsfc.nasa.gov/information/howto?title=How%20to%20Access%20M2T1NXSLV%20Cloud%20OPeNDAP%20Granules%20using%20Python)
+- [MERRA-2 de la NASA](https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2/M2T1NXSLV.5.12.4/2025/01/MERRA2_400.tavg1_2d_slv_Nx.20250101.nc4.dmr.html)
 
