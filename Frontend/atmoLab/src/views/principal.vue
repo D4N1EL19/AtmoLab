@@ -11,7 +11,7 @@
     >
       <!-- 🔹 Celda 1: Arriba izquierda -->
       <div class="p-4 flex items-start justify-start">
-        <div class="bg-white/20 rounded-lg p-4">fecha (placeholder)</div>
+        <fecha :ubicacion="userLocation" />
       </div>
 
       <!-- 🔹 Celda 2: Arriba centro -->
@@ -26,17 +26,17 @@
 
       <!-- 🔹 Celda 4: Abajo izquierda -->
       <div class="p-4 flex items-end justify-start">
-        <calendario />
+        <climaGral />
       </div>
 
       <!-- 🔹 Celda 5: Abajo centro -->
       <div class="p-4 flex items-end justify-center">
-        <div class="bg-white/20 rounded-lg p-4">Otra sección (placeholder)</div>
+        <!-- Espacio en blanco-->
       </div>
 
       <!-- 🔹 Celda 6: Abajo derecha -->
       <div class="p-4 flex items-end justify-end">
-        <div class="bg-white/20 rounded-lg p-4">Otra sección (placeholder)</div>
+        <calendario />
       </div>
     </div>
   </div>
@@ -49,9 +49,12 @@ import * as THREE from "three";
 
 import BuscadorLugar from "../components/BuscadorLugar.vue";
 import calendario from "../components/calendario.vue";
+import fecha from "../components/fecha.vue";
+import climaGral from "../components/climaGral.vue";
 
 const globeEl = ref(null);
 const world = ref(null);
+const userLocation = ref("Ubicación desconocida");
 
 onMounted(() => {
   if (!globeEl.value) return;
@@ -121,9 +124,16 @@ onMounted(() => {
   // 🔹 Geolocalización con marcador rojo usando pointsData
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
+
+        // 🔹 Convertir coordenadas a texto legible
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`
+      );
+      const data = await res.json();
+      userLocation.value = data.display_name;
 
         // Rotar suavemente hasta la ubicación
         world.value.pointOfView({ lat, lng, altitude: 2 }, 1500);
@@ -141,7 +151,7 @@ onMounted(() => {
           .pointRadius(0.3);
       },
       (err) => console.warn("No se pudo obtener la ubicación:", err),
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: false }
     );
   }
 });
