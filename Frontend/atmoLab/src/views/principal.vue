@@ -4,6 +4,7 @@
     <div class="globo-wrapper" style="overflow:hidden; width:100%; height:100%;">
       <div ref="globeEl" class="globo-canvas"></div>
     </div>
+    
     <!-- 🌥️ Capa de UI encima -->
     <div
       class="relative z-10 h-full w-full
@@ -12,7 +13,12 @@
     >
       <!-- 🔹 Celda 1: Arriba izquierda -->
       <div class="p-4 flex items-start justify-start">
-        <fecha :ubicacion="nameLocation" />
+        <div class="fecha-container" :class="{ 
+          'fecha-desplazandose': fechaDesplazandose, 
+          'fecha-en-otro-lado': fechaEnOtroLado 
+        }">
+          <fecha :ubicacion="nameLocation" />
+        </div>
       </div>
 
       <!-- 🔹 Celda 2: Arriba centro -->
@@ -60,53 +66,51 @@ const globeEl = ref(null);
 const world = ref(null);
 const nameLocation = ref("Ensenada, Baja California, México");
 const userLocation = ref({ lat: null, lng: null });
-
+const fechaDesplazandose = ref(false);
+const fechaEnOtroLado = ref(false);
 
 function actualizarUbicacion({ lat, lng, name }) {
-  // Actualizamos el texto de fecha
   nameLocation.value = name;
-
-  // Actualizamos coordenadas para climaGral
   userLocation.value.lat = lat;
   userLocation.value.lng = lng;
 }
 
-function animarGlobo(targetX) {
-  let x = 0; // posición inicial
-  const velocidad = 2; // píxeles por frame
-  const canvas = globeEl.value; // este apunta al div .globo-canvas
+function animarGloboYFecha(targetX) {
+  fechaDesplazandose.value = true;
+  
+  let x = 0;
+  const velocidad = 2;
+  const canvas = globeEl.value;
 
-  // Aseguramos que el autoRotate siga activo durante la animación
   world.value.controls().autoRotate = true;
   world.value.controls().autoRotateSpeed = 1.5;
 
   function animar() {
     if (x < targetX) {
       x += velocidad;
-      canvas.style.transform = `translateX(-${x}px)`; // mueve a la izquierda
+      canvas.style.transform = `translateX(-${x}px)`;
       requestAnimationFrame(animar);
     } else {
-      canvas.style.transform = `translateX(-${targetX}px)`;
+      canvas.style.transform = `translateX(-${targety}px)`;
+      
+      setTimeout(() => {
+        fechaDesplazandose.value = false;
+        fechaEnOtroLado.value = true;
+      }, 300);
     }
   }
 
   animar();
 }
 
-
-
 function handleFechaSeleccionada({ fecha }) {
   console.log("Fecha seleccionada:", fecha);
-
-  // Por ejemplo, queremos mover el globo 500px a la izquierda
-  animarGlobo(900);
+  animarGloboYFecha(900);
 }
-
 
 onMounted(() => {
   if (!globeEl.value) return;
 
-  // 🔹 Inicializar globo en África
   world.value = new Globe(globeEl.value, {
     rendererConfig: { alpha: true, antialias: true },
   })
@@ -115,13 +119,12 @@ onMounted(() => {
     .showAtmosphere(true)
     .atmosphereColor("#88ccff")
     .atmosphereAltitude(0.2)
-    .pointOfView({ lat: 0, lng: 20, altitude: 3 }); // África
+    .pointOfView({ lat: 0, lng: 20, altitude: 3 });
 
   world.value.renderer().setClearColor(0x000000, 0);
   world.value.controls().autoRotate = true;
   world.value.controls().autoRotateSpeed = 0.5;
 
-  // Luces
   const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
   world.value.scene().add(ambientLight);
 
@@ -129,7 +132,6 @@ onMounted(() => {
   directionalLight.position.set(5, 3, 5);
   world.value.scene().add(directionalLight);
 
-  // Nubes
   const CLOUDS_IMG_URL =
     "https://raw.githubusercontent.com/turban/webgl-earth/master/images/fair_clouds_4k.png";
   const CLOUDS_ALT = 0.004;
@@ -168,7 +170,6 @@ onMounted(() => {
     }, 1000);
   });
 
-  // 🔹 Geolocalización con marcador rojo usando pointsData
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -178,20 +179,15 @@ onMounted(() => {
         userLocation.value.lat = lat;
         userLocation.value.lng = lng;
 
-        // 🔹 Convertir coordenadas a texto legible
         const res = await fetch(
           `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`
         );
         const data = await res.json();
         nameLocation.value = data.display_name;
 
-        // Rotar suavemente hasta la ubicación
         world.value.pointOfView({ lat, lng, altitude: 2 }, 1500);
-
-        // Detener auto-rotación al centrar
         world.value.controls().autoRotate = false;
 
-        // Agregar marcador rojo
         world.value
           .pointsData([{ lat, lng, name: "Tu ubicación" }])
           .pointLat("lat")
@@ -211,19 +207,38 @@ onMounted(() => {
 .globo-wrapper {
   position: absolute;
   inset: 0;
-  overflow: hidden; /* importante para que no se vea fuera de la pantalla */
-  background-color: #000011; /* mismo azul que quieres */
+  overflow: hidden;
+  background-color: #000011;
 }
 
 .globo-canvas {
-  width: 200%; /* el doble de ancho, por ejemplo */
+  width: 200%;
   height: 100%;
-  background-color: #000011; /* asegura que el fondo azul siempre se vea */
+  background-color: #000011;
 }
 
 .globo-container,
 .globo {
   width: 100%;
   height: 100%;
+}
+
+/* Estado inicial de la fecha */
+.fecha-container {
+  transition: all 0.8s ease-in-out;
+  transform: translateX(0) translateY(0);
+  opacity: 1;
+}
+
+/* Primera fase: fecha desaparece mientras se desplaza con el globo */
+.fecha-desplazandose {
+  transform: translateX(-100%) translateY(0);
+  opacity: 0;
+}
+
+/* Segunda fase: fecha simplemente aparece del otro lado */
+.fecha-en-otro-lado {
+  transform: translateX(0) translateY(0);
+  opacity: 1;
 }
 </style>
