@@ -1,13 +1,16 @@
 <template>
-  <div class="panel-lugares bg-[#07122B] p-4 rounded-4xl shadow-md text-white w-72 h-[50%] flex flex-col justify-center">
-    <h2 class="text-center text-lg font-semibold">Ingresa tu destino</h2>
+  <div class="panel-lugares bg-[#07122B] p-4 rounded-xl shadow-md text-white w-72 h-[50%] flex flex-col justify-center"
+  style="filter: drop-shadow(6px 6px 10px #1A2B53);
+                    :drop-shadow(-2px -2px 4px #1A2B53)">
+    
+    <h2 class="text-center font-lex text-lg font-semibold">Ingresa tu destino</h2>
 
     <input
       v-model="busqueda"
       type="text"
       placeholder="Ingresa ciudad o país"
       @keyup.enter="buscarLugar"
-      class="w-full p-2 mt-2 mb-3 rounded-4xl border border-gray-300 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+      class="w-full p-2 mt-2 mb-3 rounded-4xl border border-gray-300 text-black bg-white focus:outline-none font-lex focus:ring-2 focus:ring-blue-400"
     />
 
   </div>

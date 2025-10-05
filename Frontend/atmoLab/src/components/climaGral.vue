@@ -2,6 +2,8 @@
   <div
     class="p-4 h-full w-full rounded-lg text-white font-lex
             flex flex-col justify-start"
+    style="filter: drop-shadow(6px 6px 10px #324679);
+                    :drop-shadow(-2px -2px 4px #324679)"
   >
     <h2 class="text-xl font-semibold mb-4">Condiciones Climáticas</h2>
 

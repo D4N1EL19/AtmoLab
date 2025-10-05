@@ -1,25 +1,28 @@
 <template>
 <div
-    class="bg-[#112042] p-4 rounded-lg mb-6 mx-auto w-full max-w-[320px] sm:max-w-[320px] md:max-w-[300px]"
+    class="bg-[#112042] p-4 rounded-lg mb-4 mx-auto w-full max-w-[280px] sm:max-w-[300px] md:max-w-[300px] 
+    aspect aspect-square"
+    style="filter: drop-shadow(6px 6px 10px #324679);
+                    :drop-shadow(-2px -2px 4px #324679)"
 >
 
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex justify-between items-center mb-2">
     <button
         @click="cambiarMes(-1)"
-        class="text-[#0355C3] hover:text-blue-700 font-jom text-xl md:text-2xl "
+        class="text-[#0355C3] hover:text-blue-700 font-lex text-xl md:text-2xl "
     >
         ❮
     </button>
-    <h3 class="text-3xl md:text-3xl font-semibold font-jom text-[#0355C3]">{{ nombreMes }} {{ anio }}</h3>
+    <h3 class="text-3xl md:text-3xl font-semibold font-lex text-[#0355C3]">{{ nombreMes }} {{ anio }}</h3>
     <button
         @click="cambiarMes(1)"
-        class="text-[#0355C3] hover:text-blue-700 font-jom text-xl md:text-2xl"
+        class="text-[#0355C3] hover:text-blue-700 font-lex text-xl md:text-2xl"
     >
         ❯
     </button>
     </div>
 
-    <div class="grid grid-cols-7 gap-1 text-center font-popins text-sm font-bold">
+    <div class="grid grid-cols-7 gap-x-3 gap-y-1 text-center font-popins text-sm font-bold w-[95%] mx-auto">
     <span class="text-gray-700">Lun</span>
     <span class="text-gray-700">Mar</span>
     <span class="text-gray-700">Mie</span>
@@ -37,7 +40,7 @@
         :key="dia"
         @click="seleccionarFecha(dia)"
         :class="[
-        'p-2 rounded-full cursor-pointer',
+        'aspect-[1.2/1.2] flex items-center justify-center rounded-full cursor-pointer',
         dia === diaActual && mesActual === mes && anioActual === anio
             ? 'bg-amber-50  font-bold'
             : 'text-white hover:bg-[#00174b]',

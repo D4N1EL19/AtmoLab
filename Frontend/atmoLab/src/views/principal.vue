@@ -99,7 +99,7 @@ function handleFechaSeleccionada({ fecha }) {
   console.log("Fecha seleccionada:", fecha);
 
   // Por ejemplo, queremos mover el globo 500px a la izquierda
-  animarGlobo(900);
+  animarGlobo(800);
 }
 
 
