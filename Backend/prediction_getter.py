@@ -3,6 +3,7 @@
 import os
 import joblib
 from modelo import predict_weather
+import json
 
 
 # Función para obtener la predicción del clima, recibiendo la fecha como parámetro, retorna  un diccionario con las predicciones o un mensaje de error
@@ -13,7 +14,9 @@ def get_prediction(fecha_a_predecir):
 
     # Comprobar si el modelo existe
     if not os.path.exists(MODEL_FILENAME):
-        return f"Error: El archivo del modelo '{MODEL_FILENAME}' no fue encontrado. Por favor, ejecuta 'train.py' primero para entrenar y guardar el modelo."
+        return json.dumps({
+            "error": f"El archivo del modelo '{MODEL_FILENAME}' no fue encontrado. Por favor, ejecuta 'train.py' primero para entrenar y guardar el modelo."
+        })
 
     # Cargar el modelo
     models = joblib.load(MODEL_FILENAME)
@@ -21,7 +24,12 @@ def get_prediction(fecha_a_predecir):
     # Obtener la predicción
     pronostico = predict_weather(fecha_a_predecir, models)
 
-    return pronostico
+    # Convertir los valores np.float32 a float nativo de Python
+    if isinstance(pronostico, dict):
+        pronostico = {k: float(v) for k, v in pronostico.items()}
+        return json.dumps(pronostico, ensure_ascii=False)
+    else:
+        return json.dumps({"error": pronostico}, ensure_ascii=False)
 
 
 
