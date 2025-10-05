@@ -4,7 +4,7 @@ import os
 import joblib
 from modelo import predict_weather
 import json
-
+from extrapolar_hora import generar_datos_horarios
 
 # Función para obtener la predicción del clima, recibiendo la fecha como parámetro, retorna  un diccionario con las predicciones o un mensaje de error
 # ejm. 'Temperatura_Maxima_C': np.float32(21.097271), 'Temperatura_Minima_C': np.float32(11.260718), 'Humedad_Relativa_Promedio_%': np.float32(49.84692), 'Velocidad_Viento_Promedio_kmh': np.float32(15.010931), 'Precipitacion_mm': np.float32(0.5091563)}
@@ -27,7 +27,14 @@ def get_prediction(fecha_a_predecir):
     # Convertir los valores np.float32 a float nativo de Python
     if isinstance(pronostico, dict):
         pronostico = {k: float(v) for k, v in pronostico.items()}
-        return json.dumps(pronostico, ensure_ascii=False)
+        
+        # Convertir a JSON
+        datos =  json.dumps(pronostico, ensure_ascii=False)
+
+        # generar horas
+        datos_horarios = generar_datos_horarios(pronostico)
+        return datos_horarios
+
     else:
         return json.dumps({"error": pronostico}, ensure_ascii=False)
 

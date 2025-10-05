@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from prediction_getter import get_prediction
 
 # Aqui se encuentra todo respecto a la API del proyecto
-# Para ejecutar: uvicorn API.py:app --reload
+# Para ejecutar: python3 -m uvicorn main:app --reload
 
 app = FastAPI(
     title="API de Predicciones",
