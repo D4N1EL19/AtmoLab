@@ -1,16 +1,17 @@
 <template>
-  <div class="panel-lugares">
-    <h2>Selecciona una ciudad de México</h2>
+  <div class="panel-lugares bg-blue-900 p-4 rounded-lg shadow-md text-white w-72">
+    <h2 class="text-center text-lg font-semibold">Selecciona una ciudad de México</h2>
 
     <input
       v-model="busqueda"
       type="text"
       placeholder="Ingresa ciudad o país"
       @keyup.enter="buscarLugar"
+      class="w-full p-2 mt-2 mb-3 rounded border border-gray-300 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
     />
 
-    <div v-if="lugarEncontrado" class="info-lugar">
-      <h3>{{ lugarEncontrado.name }}</h3>
+    <div v-if="lugarEncontrado" class="info-lugar bg-blue-800 p-2 rounded text-sm">
+      <h3 class="font-medium">{{ lugarEncontrado.name }}</h3>
       <p>Latitud: {{ lugarEncontrado.lat }}</p>
       <p>Longitud: {{ lugarEncontrado.lng }}</p>
     </div>
@@ -21,7 +22,7 @@
 export default {
   name: "BuscadorLugar",
   props: {
-    world: Object // el globo 3D desde el componente padre
+    world: Object
   },
   data() {
     return {
@@ -76,43 +77,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.panel-lugares {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 280px;
-  background-color: #1c3563;
-  padding: 15px 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  z-index: 10;
-}
-
-.panel-lugares h2 {
-  margin-top: 0;
-  font-size: 1.2rem;
-  color: #fbfbfb;
-  text-align: center;
-}
-
-.panel-lugares input {
-  width: 100%;
-  padding: 8px;
-  margin: 10px 0;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #fbfbfb;
-}
-
-.info-lugar {
-  margin-top: 15px;
-  background: #1c3563;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: #fbfbfb;
-}
-</style>
