@@ -6,27 +6,37 @@
     <!-- 🌥️ Capa de UI encima -->
     <div
       class="relative z-10 h-full w-full
-              grid grid-cols-1 gap-6
-              md:grid-cols-[30%_40%_30%] md:grid-rows-[20%_60%_20%]"
+              grid gap-6
+              grid-cols-[40%_30%_30%] grid-rows-[40%_60%]"
     >
-      <!-- Arriba izquierda -->
-      <div class="p-4 flex items-start">
+      <!-- 🔹 Celda 1: Arriba izquierda -->
+      <div class="p-4 flex items-start justify-start">
         <div class="bg-white/20 rounded-lg p-4">fecha (placeholder)</div>
       </div>
 
-      <!-- Arriba derecha -->
-      <div class="p-4 flex items-start justify-end">
+      <!-- 🔹 Celda 2: Arriba centro -->
+      <div class="p-4 flex">
+        <!-- Espacio en blanco-->
+      </div>
+
+      <!-- 🔹 Celda 3: Arriba derecha -->
+      <div class="p-4 flex justify-center">
         <BuscadorLugar />
       </div>
 
-      <!-- Centro izquierda -->
-      <div class="p-4 flex items-center">
-        <climaGral />
+      <!-- 🔹 Celda 4: Abajo izquierda -->
+      <div class="p-4 flex items-end justify-start">
+        <calendario />
       </div>
 
-      <!-- Centro derecha -->
-      <div class="p-4 flex items-center justify-end">
-        <calendario />
+      <!-- 🔹 Celda 5: Abajo centro -->
+      <div class="p-4 flex items-end justify-center">
+        <div class="bg-white/20 rounded-lg p-4">Otra sección (placeholder)</div>
+      </div>
+
+      <!-- 🔹 Celda 6: Abajo derecha -->
+      <div class="p-4 flex items-end justify-end">
+        <div class="bg-white/20 rounded-lg p-4">Otra sección (placeholder)</div>
       </div>
     </div>
   </div>
@@ -40,9 +50,7 @@ import * as THREE from "three";
 import BuscadorLugar from "../components/BuscadorLugar.vue";
 import calendario from "../components/calendario.vue";
 import climaGral from "../components/climaGral.vue";
-import fecha from "../components/fecha.vue";
 
-// 🌍 Referencia al contenedor del globo
 const globeEl = ref(null);
 
 onMounted(() => {
@@ -62,7 +70,6 @@ onMounted(() => {
   world.controls().autoRotate = true;
   world.controls().autoRotateSpeed = 0.5;
 
-  // 🌤️ Luces
   const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
   world.scene().add(ambientLight);
 
@@ -70,21 +77,24 @@ onMounted(() => {
   directionalLight.position.set(5, 3, 5);
   world.scene().add(directionalLight);
 
-  // ☁️ Nubes
   const CLOUDS_IMG_URL =
     "https://raw.githubusercontent.com/turban/webgl-earth/master/images/fair_clouds_4k.png";
   const CLOUDS_ALT = 0.004;
   const CLOUDS_ROTATION_SPEED = -0.006;
 
   new THREE.TextureLoader().load(CLOUDS_IMG_URL, (cloudsTexture) => {
+    const cloudsMaterial = new THREE.MeshPhongMaterial({
+      map: cloudsTexture,
+      transparent: true,
+      opacity: 0, // <-- invisible desde el inicio
+    });
+
     const clouds = new THREE.Mesh(
       new THREE.SphereGeometry(world.getGlobeRadius() * (1 + CLOUDS_ALT), 75, 75),
-      new THREE.MeshPhongMaterial({
-        map: cloudsTexture,
-        transparent: true,
-        opacity: 0.4,
-      })
+      cloudsMaterial
     );
+
+    clouds.visible = true; // ya está en la escena, pero opacidad 0
     world.scene().add(clouds);
 
     const rotateClouds = () => {
@@ -92,14 +102,18 @@ onMounted(() => {
       requestAnimationFrame(rotateClouds);
     };
     rotateClouds();
+
+    // Fade-in de opacidad
+    setTimeout(() => {
+      let opacity = 0;
+      const fadeIn = () => {
+        opacity += 0.01;
+        if (opacity > 0.4) opacity = 0.4;
+        clouds.material.opacity = opacity;
+        if (opacity < 0.4) requestAnimationFrame(fadeIn);
+      };
+      fadeIn();
+    }, 1000);
   });
 });
 </script>
-
-<style scoped>
-.globo {
-  width: 100%;
-  height: 100%;
-  background: transparent;
-}
-</style>
