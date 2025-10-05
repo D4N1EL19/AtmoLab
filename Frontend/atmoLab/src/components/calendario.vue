@@ -1,25 +1,25 @@
 <template>
 <div
-    class="bg-gray-100 p-4 rounded-lg mb-6 mx-auto w-full max-w-[320px] sm:max-w-[320px] md:max-w-[300px]"
+    class="bg-[#112042] p-4 rounded-lg mb-6 mx-auto w-full max-w-[320px] sm:max-w-[320px] md:max-w-[300px]"
 >
 
     <div class="flex justify-between items-center mb-4">
     <button
         @click="cambiarMes(-1)"
-        class="text-[#002E6C] hover:text-blue-700 font-jom text-xl md:text-2xl "
+        class="text-[#0355C3] hover:text-blue-700 font-jom text-xl md:text-2xl "
     >
         ❮
     </button>
-    <h3 class="text-3xl md:text-3xl font-jom text-[#002E6C]">{{ nombreMes }} {{ anio }}</h3>
+    <h3 class="text-3xl md:text-3xl font-semibold font-jom text-[#0355C3]">{{ nombreMes }} {{ anio }}</h3>
     <button
         @click="cambiarMes(1)"
-        class="text-[#002E6C] hover:text-blue-700 font-jom text-xl md:text-2xl"
+        class="text-[#0355C3] hover:text-blue-700 font-jom text-xl md:text-2xl"
     >
         ❯
     </button>
     </div>
 
-    <div class="grid grid-cols-7 gap-1 text-center font-popins text-sm">
+    <div class="grid grid-cols-7 gap-1 text-center font-popins text-sm font-bold">
     <span class="text-gray-700">Lun</span>
     <span class="text-gray-700">Mar</span>
     <span class="text-gray-700">Mie</span>
@@ -39,9 +39,9 @@
         :class="[
         'p-2 rounded-full cursor-pointer',
         dia === diaActual && mesActual === mes && anioActual === anio
-            ? 'bg-blue-300  font-bold'
-            : 'text-gray-600 hover:bg-gray-300',
-        dia === diaSeleccionado ? 'bg-[#FFFF]' : ''
+            ? 'bg-amber-50  font-bold'
+            : 'text-white hover:bg-[#00174b]',
+        dia === diaSeleccionado ? 'bg-[#011138]' : ''
         ]"
     >
         {{ dia }}
