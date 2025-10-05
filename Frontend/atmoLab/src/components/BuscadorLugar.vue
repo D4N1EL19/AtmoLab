@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-lugares bg-[#07122B] p-4 rounded-4xl shadow-md text-white w-72 h-[50%]">
+  <div class="panel-lugares bg-[#07122B] p-4 rounded-4xl shadow-md text-white w-72 h-[50%] flex flex-col justify-center">
     <h2 class="text-center text-lg font-semibold">Ingresa tu destino</h2>
 
     <input

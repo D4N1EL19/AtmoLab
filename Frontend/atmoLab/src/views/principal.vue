@@ -38,7 +38,7 @@
       </div>
 
       <!-- 🔹 Celda 6: Abajo derecha -->
-      <div class="p-4 flex items-end justify-end">
+      <div class="p-4 flex items-center justify-center  bg-white/10 w-full">
         <calendario />
       </div>
     </div>
