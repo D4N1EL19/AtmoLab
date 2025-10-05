@@ -2,6 +2,7 @@ import pandas as pd
 import os
 
 
+#Funcion que carga informacion desde un archivo CSV especificado
 def load_data_csv(source_path):
     if not os.path.exists(archivo_csv):
         print(f"Error: El archivo {archivo_csv} no existe.")
