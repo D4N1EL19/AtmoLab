@@ -33,6 +33,7 @@ def preprocess_data(dataframe, columns, multiplier=2):
         df_clean = df_clean[mask]
     
     return df_clean
+    
 
 def train_model(dataframe):
     # Function to train a machine learning model
