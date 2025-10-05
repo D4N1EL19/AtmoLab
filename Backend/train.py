@@ -94,7 +94,7 @@ def train_model(dataframe, target_columns):
 if __name__ == "__main__":
     # Construir una ruta absoluta compatible con Linux y Windows
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    archivo_csv = os.path.join(base_dir, "csv", "Ensenada_2000_2025_weather.csv")
+    archivo_csv = os.path.join(base_dir, "data", "Ensenada_2000_2025_weather.csv")
     dataframe = load_data_csv(archivo_csv)
 
     print("Datos leídos correctamente de", archivo_csv)
