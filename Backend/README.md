@@ -1,5 +1,5 @@
 
-# Lloverá hoy?
+# AtmoLab
 
 Algoritmo de machine learning entrenado con datos de la NASA para
 predecir el clima a mediano plazo
