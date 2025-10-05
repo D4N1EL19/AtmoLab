@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-lugares bg-blue-900 p-4 rounded-lg shadow-md text-white w-72">
+  <div class="panel-lugares bg-blue-900 p-4 rounded-4xl shadow-md text-white w-72">
     <h2 class="text-center text-lg font-semibold">Selecciona una ciudad de México</h2>
 
     <input
@@ -7,10 +7,10 @@
       type="text"
       placeholder="Ingresa ciudad o país"
       @keyup.enter="buscarLugar"
-      class="w-full p-2 mt-2 mb-3 rounded border border-gray-300 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+      class="w-full p-2 mt-2 mb-3 rounded-4xl border border-gray-300 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
     />
 
-    <div v-if="lugarEncontrado" class="info-lugar bg-blue-800 p-2 rounded text-sm">
+    <div v-if="lugarEncontrado" class="info-lugar bg-blue-900 p-2 rounded text-sm">
       <h3 class="font-medium">{{ lugarEncontrado.name }}</h3>
       <p>Latitud: {{ lugarEncontrado.lat }}</p>
       <p>Longitud: {{ lugarEncontrado.lng }}</p>
@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     async buscarLugar() {
-      if (!this.busqueda) return;
+      if (!this.busqueda || !this.world) return;
 
       const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
         this.busqueda
