@@ -1,10 +1,10 @@
 #En esta carpeta se obtiene los datos de las predicciones de una fecha determinada
-#Libreria para obtener estos datos
+# Libreria para obtener estos datos
 import os
 import joblib
 from modelo import predict_weather
 import json
-from extrapolar_hora import generar_datos_horarios
+from utils.extrapolar_hora import generar_datos_horarios
 
 # Función para obtener la predicción del clima, recibiendo la fecha como parámetro, retorna  un diccionario con las predicciones o un mensaje de error
 # ejm. 'Temperatura_Maxima_C': np.float32(21.097271), 'Temperatura_Minima_C': np.float32(11.260718), 'Humedad_Relativa_Promedio_%': np.float32(49.84692), 'Velocidad_Viento_Promedio_kmh': np.float32(15.010931), 'Precipitacion_mm': np.float32(0.5091563)}
