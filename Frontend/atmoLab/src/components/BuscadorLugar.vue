@@ -1,16 +1,16 @@
 <template>
-  <div class="panel-lugares bg-blue-900 p-4 rounded-4xl shadow-md text-white w-72">
-    <h2 class="text-center text-lg font-semibold">Selecciona una ciudad de México</h2>
+  <div class="panel-lugares bg-blue-900 p-4 rounded-3xl shadow-md text-white w-72">
+    <h2 class="text-center text-lg font-semibold mb-3">Selecciona una ciudad de México</h2>
 
     <input
       v-model="busqueda"
       type="text"
       placeholder="Ingresa ciudad o país"
       @keyup.enter="buscarLugar"
-      class="w-full p-2 mt-2 mb-3 rounded-4xl border border-gray-300 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+      class="w-full p-3 mb-3 rounded-3xl border border-gray-300 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
     />
 
-    <div v-if="lugarEncontrado" class="info-lugar bg-blue-900 p-2 rounded text-sm">
+    <div v-if="lugarEncontrado" class="info-lugar bg-blue-900 p-2 rounded-2xl text-sm">
       <h3 class="font-medium">{{ lugarEncontrado.name }}</h3>
       <p>Latitud: {{ lugarEncontrado.lat }}</p>
       <p>Longitud: {{ lugarEncontrado.lng }}</p>
@@ -77,3 +77,4 @@ export default {
   }
 };
 </script>
+

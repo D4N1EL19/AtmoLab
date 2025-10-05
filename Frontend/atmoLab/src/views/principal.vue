@@ -147,10 +147,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-.globo-container,
-.globo {
-  width: 100%;
-  height: 100%;
-}
-</style>
+
