@@ -11,10 +11,11 @@
 import Globe from "globe.gl";
 import * as THREE from "three";
 import BuscadorLugar from "./BuscadorLugar.vue";
+import calendario from "./calendario.vue";
 
 export default {
   name: "MapaVue",
-  components: { BuscadorLugar },
+  components: { BuscadorLugar, calendario },
   data() {
     return {
       world: null
@@ -67,8 +68,7 @@ export default {
 <style scoped>
 .globo-container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
 }
 
 .globo {
