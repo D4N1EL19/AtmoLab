@@ -1,8 +1,9 @@
 <template>
   <div class="relative h-screen w-screen overflow-hidden">
     <!-- 🌍 Capa del globo -->
-    <div ref="globeEl" class="absolute inset-0 z-0"></div>
-
+    <div class="globo-wrapper" style="overflow:hidden; width:100%; height:100%;">
+      <div ref="globeEl" class="globo-canvas"></div>
+    </div>
     <!-- 🌥️ Capa de UI encima -->
     <div
       class="relative z-10 h-full w-full
@@ -39,7 +40,7 @@
 
       <!-- 🔹 Celda 6: Abajo derecha -->
       <div class="p-4 flex items-center justify-center">
-        <calendario />
+        <calendario @fecha-seleccionada="handleFechaSeleccionada" />
       </div>
     </div>
   </div>
@@ -68,7 +69,37 @@ function actualizarUbicacion({ lat, lng, name }) {
   // Actualizamos coordenadas para climaGral
   userLocation.value.lat = lat;
   userLocation.value.lng = lng;
+}
 
+function animarGlobo(targetX) {
+  let x = 0; // posición inicial
+  const velocidad = 2; // píxeles por frame
+  const canvas = globeEl.value; // este apunta al div .globo-canvas
+
+  // Aseguramos que el autoRotate siga activo durante la animación
+  world.value.controls().autoRotate = true;
+  world.value.controls().autoRotateSpeed = 1.5;
+
+  function animar() {
+    if (x < targetX) {
+      x += velocidad;
+      canvas.style.transform = `translateX(-${x}px)`; // mueve a la izquierda
+      requestAnimationFrame(animar);
+    } else {
+      canvas.style.transform = `translateX(-${targetX}px)`;
+    }
+  }
+
+  animar();
+}
+
+
+
+function handleFechaSeleccionada({ fecha }) {
+  console.log("Fecha seleccionada:", fecha);
+
+  // Por ejemplo, queremos mover el globo 500px a la izquierda
+  animarGlobo(900);
 }
 
 
@@ -177,6 +208,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.globo-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden; /* importante para que no se vea fuera de la pantalla */
+  background-color: #000011; /* mismo azul que quieres */
+}
+
+.globo-canvas {
+  width: 200%; /* el doble de ancho, por ejemplo */
+  height: 100%;
+  background-color: #000011; /* asegura que el fondo azul siempre se vea */
+}
+
 .globo-container,
 .globo {
   width: 100%;
