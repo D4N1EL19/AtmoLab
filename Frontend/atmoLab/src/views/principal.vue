@@ -4,7 +4,7 @@
     <div class="globo-wrapper" style="overflow:hidden; width:100%; height:100%;">
       <div ref="globeEl" class="globo-canvas"></div>
     </div>
-    
+
     <!-- 🌥️ Capa de UI encima -->
     <div
       class="relative z-10 h-full w-full
@@ -13,59 +13,87 @@
     >
       <!-- 🔹 Celda 1: Arriba izquierda -->
       <div class="p-4 flex items-start justify-start">
-        <div class="fecha-container" :class="{ 
-          'fecha-desplazandose': fechaDesplazandose, 
-          'fecha-en-otro-lado': fechaEnOtroLado 
-        }">
+        <div
+          v-if="!fechaEnOtroLado"
+          class="fecha-container"
+          :class="{
+            'fecha-desplazandose': fechaDesplazandose
+          }"
+        >
           <fecha :ubicacion="nameLocation" />
         </div>
       </div>
 
       <!-- 🔹 Celda 2: Arriba centro -->
-      <div class="p-4 flex">
-        <!-- Espacio en blanco-->
-      </div>
+      <div class="p-4 flex"></div>
 
       <!-- 🔹 Celda 3: Arriba derecha -->
-      <div class="p-4 flex justify-center">
-        <BuscadorLugar 
-          :world="world" 
-          @actualizar-ubicacion="actualizarUbicacion" 
+      <div class="p-4 flex justify-center items-start">
+        <!-- 🔸 El texto aparece aquí después de la animación -->
+        <div
+          v-if="fechaEnOtroLado"
+          class="fecha-container fecha-en-otro-lado"
+        >
+          <fecha :ubicacion="nameLocation" />
+        </div>
+
+        <!-- Buscador solo visible antes de seleccionar fecha -->
+        <BuscadorLugar
+          v-if="!fechaSeleccionada"
+          :world="world"
+          @actualizar-ubicacion="actualizarUbicacion"
         />
       </div>
 
       <!-- 🔹 Celda 4: Abajo izquierda -->
       <div class="p-4 flex items-end justify-start">
-        <climaGral :lat="userLocation.lat" :lng="userLocation.lng" />
+        <climaGral
+          v-if="!fechaSeleccionada"
+          :lat="userLocation.lat"
+          :lng="userLocation.lng"
+        />
       </div>
 
       <!-- 🔹 Celda 5: Abajo centro -->
-      <div class="p-4 flex items-end justify-center">
-        <!-- Espacio en blanco-->
-      </div>
+      <div class="p-4 flex items-end justify-center"></div>
 
       <!-- 🔹 Celda 6: Abajo derecha -->
       <div class="p-4 flex items-center justify-center">
-        <calendario @fecha-seleccionada="handleFechaSeleccionada" />
+        <calendario
+          v-if="!fechaSeleccionada"
+          @fecha-seleccionada="handleFechaSeleccionada"
+        />
       </div>
     </div>
   </div>
+
+  <prediccion
+    v-if="fechaSeleccionada"
+    :fecha="fechaSeleccionada"
+    class="absolute inset-0 z-50 flex justify-center items-center"
+  />
 </template>
+
 
 <script setup>
 import { ref, onMounted } from "vue";
 import Globe from "globe.gl";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as THREE from "three";
 
 import BuscadorLugar from "../components/BuscadorLugar.vue";
 import calendario from "../components/calendario.vue";
 import fecha from "../components/fecha.vue";
 import climaGral from "../components/climaGral.vue";
+import prediccion from "../components/prediccion.vue";
 
 const globeEl = ref(null);
 const world = ref(null);
 const nameLocation = ref("Ensenada, Baja California, México");
 const userLocation = ref({ lat: null, lng: null });
+const fechaSeleccionada = ref(null);
+
+// 🔹 NUEVAS VARIABLES PARA ANIMAR TEXTO
 const fechaDesplazandose = ref(false);
 const fechaEnOtroLado = ref(false);
 
@@ -75,15 +103,18 @@ function actualizarUbicacion({ lat, lng, name }) {
   userLocation.value.lng = lng;
 }
 
-function animarGloboYFecha(targetX) {
-  fechaDesplazandose.value = true;
-  
+function animarGlobo(targetX, lat = userLocation.value.lat, lng = userLocation.value.lng) {
   let x = 0;
-  const velocidad = 2;
+  const velocidad = 15;
   const canvas = globeEl.value;
 
+  // Empieza animación de la fecha
+  fechaDesplazandose.value = true;
+  fechaEnOtroLado.value = false;
+
+  // Activar rotación del globo
   world.value.controls().autoRotate = true;
-  world.value.controls().autoRotateSpeed = 1.5;
+  world.value.controls().autoRotateSpeed = 15;
 
   function animar() {
     if (x < targetX) {
@@ -91,8 +122,13 @@ function animarGloboYFecha(targetX) {
       canvas.style.transform = `translateX(-${x}px)`;
       requestAnimationFrame(animar);
     } else {
-      canvas.style.transform = `translateX(-${targety}px)`;
-      
+      canvas.style.transform = `translateX(-${targetX}px)`;
+      world.value.controls().autoRotate = false;
+
+      if (lat && lng)
+        world.value.pointOfView({ lat, lng, altitude: 2 }, 1000);
+
+      // Espera breve antes de mostrar texto nuevamente
       setTimeout(() => {
         fechaDesplazandose.value = false;
         fechaEnOtroLado.value = true;
@@ -104,10 +140,8 @@ function animarGloboYFecha(targetX) {
 }
 
 function handleFechaSeleccionada({ fecha }) {
-  console.log("Fecha seleccionada:", fecha);
-
-  animarGlobo(800);
-
+  fechaSeleccionada.value = fecha;
+  animarGlobo(900);
 }
 
 onMounted(() => {
@@ -134,6 +168,7 @@ onMounted(() => {
   directionalLight.position.set(5, 3, 5);
   world.value.scene().add(directionalLight);
 
+  // Nubes
   const CLOUDS_IMG_URL =
     "https://raw.githubusercontent.com/turban/webgl-earth/master/images/fair_clouds_4k.png";
   const CLOUDS_ALT = 0.004;
@@ -172,6 +207,35 @@ onMounted(() => {
     }, 1000);
   });
 
+  // Satélite
+  const loader = new GLTFLoader();
+  const radius = world.value.getGlobeRadius() * 1.4;
+
+  loader.load(
+    new URL("../assets/modelos/satellite.glb", import.meta.url).href,
+    (gltf) => {
+      const satellite = gltf.scene;
+      satellite.scale.set(0.2, 0.2, 0.2);
+      satellite.position.set(radius, 0, 0);
+      world.value.scene().add(satellite);
+
+      const orbitSpeed = 0.3;
+      const orbitRadius = radius;
+
+      const animateSatellite = () => {
+        const time = Date.now() * 0.001 * orbitSpeed;
+        satellite.position.x = Math.cos(time) * orbitRadius;
+        satellite.position.z = Math.sin(time) * orbitRadius;
+        satellite.rotation.y += 0.02;
+        requestAnimationFrame(animateSatellite);
+      };
+      animateSatellite();
+    },
+    undefined,
+    (error) => console.error("❌ Error cargando el satélite:", error)
+  );
+
+  // Geolocalización
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -219,28 +283,35 @@ onMounted(() => {
   background-color: #000011;
 }
 
-.globo-container,
-.globo {
-  width: 100%;
-  height: 100%;
-}
-
-/* Estado inicial de la fecha */
+/* Estado base del contenedor de fecha */
 .fecha-container {
   transition: all 0.8s ease-in-out;
-  transform: translateX(0) translateY(0);
+  transform: translateX(0);
   opacity: 1;
 }
 
-/* Primera fase: fecha desaparece mientras se desplaza con el globo */
+/* 🔹 Cuando se está desplazando (salida) */
 .fecha-desplazandose {
-  transform: translateX(-100%) translateY(0);
+  transform: translateX(-100%);
   opacity: 0;
 }
 
-/* Segunda fase: fecha simplemente aparece del otro lado */
+/* 🔹 Cuando aparece en el otro lado (entrada suave) */
 .fecha-en-otro-lado {
-  transform: translateX(0) translateY(0);
-  opacity: 1;
+  opacity: 0;
+  transform: translateX(20%);
+  animation: aparecer 0.8s ease-out forwards;
+}
+
+/* 🔸 Animación personalizada para entrada */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateX(20%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 </style>

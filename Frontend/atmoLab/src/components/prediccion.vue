@@ -1,5 +1,5 @@
 <template>
-    <div class="w-screen h-screen bg-black/20 flex flex-col justify-center items-center font-lex">
+    <div class="w-screen h-screen flex flex-col justify-center items-center font-lex">
         <p class="text-center text-4xl font-semibold text-white mb-4">
             Pronostico por hora 
         </p>
