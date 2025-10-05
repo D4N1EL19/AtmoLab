@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, date, timedelta
 from typing import List, Dict, Any
 from pydantic import BaseModel, Field
@@ -11,6 +12,19 @@ app = FastAPI(
     title="API de Predicciones",
     description="API para obtener predicciones por fecha individual o rango de fechas",
     version="1.0.0"
+)
+
+origins = [
+    "http://localhost:5173", 
+    "http://127.0.0.1:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Modelos de respuesta
