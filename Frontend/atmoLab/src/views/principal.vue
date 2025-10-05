@@ -21,7 +21,7 @@
 
       <!-- 🔹 Celda 3: Arriba derecha -->
       <div class="p-4 flex justify-center">
-        <BuscadorLugar />
+        <BuscadorLugar :world="world" />
       </div>
 
       <!-- 🔹 Celda 4: Abajo izquierda -->
@@ -49,14 +49,15 @@ import * as THREE from "three";
 
 import BuscadorLugar from "../components/BuscadorLugar.vue";
 import calendario from "../components/calendario.vue";
-import climaGral from "../components/climaGral.vue";
 
 const globeEl = ref(null);
+const world = ref(null);
 
 onMounted(() => {
   if (!globeEl.value) return;
 
-  const world = new Globe(globeEl.value, {
+  // 🔹 Inicializar globo en África
+  world.value = new Globe(globeEl.value, {
     rendererConfig: { alpha: true, antialias: true },
   })
     .globeImageUrl("//cdn.jsdelivr.net/npm/three-globe/example/img/earth-blue-marble.jpg")
@@ -64,19 +65,21 @@ onMounted(() => {
     .showAtmosphere(true)
     .atmosphereColor("#88ccff")
     .atmosphereAltitude(0.2)
-    .pointOfView({ lat: 20, lng: -100, altitude: 3 });
+    .pointOfView({ lat: 0, lng: 20, altitude: 3 }); // África
 
-  world.renderer().setClearColor(0x000000, 0);
-  world.controls().autoRotate = true;
-  world.controls().autoRotateSpeed = 0.5;
+  world.value.renderer().setClearColor(0x000000, 0);
+  world.value.controls().autoRotate = true;
+  world.value.controls().autoRotateSpeed = 0.5;
 
+  // Luces
   const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-  world.scene().add(ambientLight);
+  world.value.scene().add(ambientLight);
 
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
   directionalLight.position.set(5, 3, 5);
-  world.scene().add(directionalLight);
+  world.value.scene().add(directionalLight);
 
+  // Nubes
   const CLOUDS_IMG_URL =
     "https://raw.githubusercontent.com/turban/webgl-earth/master/images/fair_clouds_4k.png";
   const CLOUDS_ALT = 0.004;
@@ -86,16 +89,16 @@ onMounted(() => {
     const cloudsMaterial = new THREE.MeshPhongMaterial({
       map: cloudsTexture,
       transparent: true,
-      opacity: 0, // <-- invisible desde el inicio
+      opacity: 0,
     });
 
     const clouds = new THREE.Mesh(
-      new THREE.SphereGeometry(world.getGlobeRadius() * (1 + CLOUDS_ALT), 75, 75),
+      new THREE.SphereGeometry(world.value.getGlobeRadius() * (1 + CLOUDS_ALT), 75, 75),
       cloudsMaterial
     );
 
-    clouds.visible = true; // ya está en la escena, pero opacidad 0
-    world.scene().add(clouds);
+    clouds.visible = true;
+    world.value.scene().add(clouds);
 
     const rotateClouds = () => {
       clouds.rotation.y += (CLOUDS_ROTATION_SPEED * Math.PI) / 180;
@@ -103,7 +106,6 @@ onMounted(() => {
     };
     rotateClouds();
 
-    // Fade-in de opacidad
     setTimeout(() => {
       let opacity = 0;
       const fadeIn = () => {
@@ -115,5 +117,40 @@ onMounted(() => {
       fadeIn();
     }, 1000);
   });
+
+  // 🔹 Geolocalización con marcador rojo usando pointsData
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        // Rotar suavemente hasta la ubicación
+        world.value.pointOfView({ lat, lng, altitude: 2 }, 1500);
+
+        // Detener auto-rotación al centrar
+        world.value.controls().autoRotate = false;
+
+        // Agregar marcador rojo
+        world.value
+          .pointsData([{ lat, lng, name: "Tu ubicación" }])
+          .pointLat("lat")
+          .pointLng("lng")
+          .pointColor(() => "red")
+          .pointAltitude(0.01)
+          .pointRadius(0.3);
+      },
+      (err) => console.warn("No se pudo obtener la ubicación:", err),
+      { enableHighAccuracy: true }
+    );
+  }
 });
 </script>
+
+<style scoped>
+.globo-container,
+.globo {
+  width: 100%;
+  height: 100%;
+}
+</style>
