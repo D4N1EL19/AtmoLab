@@ -1,6 +1,6 @@
 <template>
-  <div class="panel-lugares bg-blue-900 p-4 rounded-4xl shadow-md text-white w-72">
-    <h2 class="text-center text-lg font-semibold">Selecciona una ciudad de México</h2>
+  <div class="panel-lugares bg-[#07122B] p-4 rounded-4xl shadow-md text-white w-72 h-[50%]">
+    <h2 class="text-center text-lg font-semibold">Ingresa tu destino</h2>
 
     <input
       v-model="busqueda"
@@ -10,11 +10,6 @@
       class="w-full p-2 mt-2 mb-3 rounded-4xl border border-gray-300 text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
     />
 
-    <div v-if="lugarEncontrado" class="info-lugar bg-blue-900 p-2 rounded text-sm">
-      <h3 class="font-medium">{{ lugarEncontrado.name }}</h3>
-      <p>Latitud: {{ lugarEncontrado.lat }}</p>
-      <p>Longitud: {{ lugarEncontrado.lng }}</p>
-    </div>
   </div>
 </template>
 
@@ -49,6 +44,13 @@ export default {
             lat: parseFloat(lugar.lat),
             lng: parseFloat(lugar.lon)
           };
+
+          // Emitimos evento al padre
+          this.$emit("actualizar-ubicacion", {
+            lat: this.lugarEncontrado.lat,
+            lng: this.lugarEncontrado.lng,
+            name: this.lugarEncontrado.name
+          });
 
           // Zoom al lugar
           this.world.pointOfView(
