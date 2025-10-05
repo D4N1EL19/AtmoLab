@@ -1,8 +1,8 @@
 <template>
-  <div class="p-4 text-white font-lex">
-    <p class="text-5xl m-4">{{ diaSemana }}</p>
+  <div class="p-4 text-white font-lex w-[80%]">
+    <p class="text-5xl font-semibold m-4">{{ diaSemana }}</p>
     <p class="text-4xl m-4">{{ fechaCompleta }}</p>
-    <p class="text-2xl m-4">{{ ubicacion }}</p>
+    <p class="text-xl m-4">{{ ubicacion }}</p>
   </div>
 </template>
 

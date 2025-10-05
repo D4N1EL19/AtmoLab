@@ -11,7 +11,7 @@
     >
       <!-- 🔹 Celda 1: Arriba izquierda -->
       <div class="p-4 flex items-start justify-start">
-        <fecha :ubicacion="userLocation" />
+        <fecha :ubicacion="nameLocation" />
       </div>
 
       <!-- 🔹 Celda 2: Arriba centro -->
@@ -21,12 +21,15 @@
 
       <!-- 🔹 Celda 3: Arriba derecha -->
       <div class="p-4 flex justify-center">
-        <BuscadorLugar :world="world" />
+        <BuscadorLugar 
+          :world="world" 
+          @actualizar-ubicacion="actualizarUbicacion" 
+        />
       </div>
 
       <!-- 🔹 Celda 4: Abajo izquierda -->
       <div class="p-4 flex items-end justify-start">
-        <climaGral />
+        <climaGral :lat="userLocation.lat" :lng="userLocation.lng" />
       </div>
 
       <!-- 🔹 Celda 5: Abajo centro -->
@@ -35,7 +38,7 @@
       </div>
 
       <!-- 🔹 Celda 6: Abajo derecha -->
-      <div class="p-4 flex items-end justify-end">
+      <div class="p-4 flex items-center justify-center">
         <calendario />
       </div>
     </div>
@@ -54,7 +57,20 @@ import climaGral from "../components/climaGral.vue";
 
 const globeEl = ref(null);
 const world = ref(null);
-const userLocation = ref("Ubicación desconocida");
+const nameLocation = ref("Ensenada, Baja California, México");
+const userLocation = ref({ lat: null, lng: null });
+
+
+function actualizarUbicacion({ lat, lng, name }) {
+  // Actualizamos el texto de fecha
+  nameLocation.value = name;
+
+  // Actualizamos coordenadas para climaGral
+  userLocation.value.lat = lat;
+  userLocation.value.lng = lng;
+
+}
+
 
 onMounted(() => {
   if (!globeEl.value) return;
@@ -128,12 +144,15 @@ onMounted(() => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
 
+        userLocation.value.lat = lat;
+        userLocation.value.lng = lng;
+
         // 🔹 Convertir coordenadas a texto legible
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`
-      );
-      const data = await res.json();
-      userLocation.value = data.display_name;
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`
+        );
+        const data = await res.json();
+        nameLocation.value = data.display_name;
 
         // Rotar suavemente hasta la ubicación
         world.value.pointOfView({ lat, lng, altitude: 2 }, 1500);
